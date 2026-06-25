@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fit Takip Paneli V2</title>
+  <style>
+    :root{
+      --bg0:#050816;
+      --bg1:#0b1224;
+      --card:#101827;
+      --card2:#121f35;
+      --soft:#1d2a44;
+      --line:#2a3a59;
+      --text:#e8edf7;
+      --muted:#96a3b8;
+      --accent:#38bdf8;
+      --accent2:#22c55e;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+      --push:#fb7185;
+      --pull:#60a5fa;
+      --legs:#4ade80;
+      --off:#a78bfa;
+      --shadow:0 18px 55px rgba(0,0,0,.35);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter, Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(56,189,248,.22), transparent 28rem),
+        radial-gradient(circle at bottom right, rgba(34,197,94,.13), transparent 25rem),
+        linear-gradient(135deg,var(--bg0),var(--bg1));
+      color:var(--text);
+      min-height:100vh;
+    }
+    .app{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
+    aside{
+      border-right:1px solid var(--line);
+      background:rgba(5,8,22,.82);
+      backdrop-filter: blur(14px);
+      padding:22px 16px;
+      position:sticky;
+      top:0;
+      height:100vh;
+      overflow:auto;
+    }
+    .brand{
+      display:flex;align-items:center;gap:12px;margin-bottom:22px;
+    }
+    .logo{
+      width:44px;height:44px;border-radius:14px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      display:grid;place-items:center;color:#00111a;font-weight:900;
+      box-shadow:0 12px 30px rgba(56,189,248,.25);
+    }
+    .brand h1{font-size:18px;margin:0;line-height:1.1}
+    .brand small{color:var(--muted)}
+    nav{display:grid;gap:8px}
+    nav button{
+      display:flex;align-items:center;gap:10px;
+      width:100%;padding:12px 13px;border:1px solid transparent;border-radius:14px;
+      background:transparent;color:var(--muted);cursor:pointer;text-align:left;
+      font-weight:700;
+    }
+    nav button:hover{background:rgba(29,42,68,.65);color:var(--text)}
+    nav button.active{
+      background:linear-gradient(135deg, rgba(56,189,248,.22), rgba(34,197,94,.14));
+      color:var(--text);
+      border-color:rgba(56,189,248,.35);
+    }
+    .sidebar-card{
+      margin-top:18px;padding:14px;border-radius:16px;border:1px solid var(--line);
+      background:rgba(16,24,39,.65);
+    }
+    .sidebar-card p{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.45}
+    .content{padding:24px;max-width:1300px;width:100%;margin:0 auto}
+    .topbar{
+      display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px;
+    }
+    .topbar h2{font-size:28px;margin:0 0 6px}
+    .topbar p{margin:0;color:var(--muted)}
+    .mobile-menu{display:none}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+    .span-12{grid-column:span 12}.span-8{grid-column:span 8}.span-7{grid-column:span 7}.span-6{grid-column:span 6}.span-5{grid-column:span 5}.span-4{grid-column:span 4}.span-3{grid-column:span 3}
+    .card{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(16,24,39,.95), rgba(12,18,31,.95));
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+    .card h3{margin:0 0 12px;font-size:18px}
+    .card .sub{color:var(--muted);font-size:13px;margin-top:-5px;margin-bottom:12px}
+    .metric{
+      display:flex;flex-direction:column;gap:4px;min-height:118px;justify-content:center;
+    }
+    .metric .label{font-size:13px;color:var(--muted)}
+    .metric .value{font-size:30px;font-weight:900;letter-spacing:-.04em}
+    .metric .hint{font-size:12px;color:var(--muted)}
+    .pill{
+      display:inline-flex;align-items:center;gap:7px;
+      padding:7px 10px;border-radius:999px;background:rgba(29,42,68,.8);
+      color:#dbeafe;font-size:12px;font-weight:800;border:1px solid rgba(255,255,255,.06);
+      margin:3px 4px 3px 0;
+    }
+    .pill.push{background:rgba(251,113,133,.16);color:#fecdd3;border-color:rgba(251,113,133,.3)}
+    .pill.pull{background:rgba(96,165,250,.16);color:#bfdbfe;border-color:rgba(96,165,250,.3)}
+    .pill.legs{background:rgba(74,222,128,.16);color:#bbf7d0;border-color:rgba(74,222,128,.3)}
+    .pill.off{background:rgba(167,139,250,.16);color:#ddd6fe;border-color:rgba(167,139,250,.3)}
+    .pill.warn{background:rgba(245,158,11,.14);color:#fde68a;border-color:rgba(245,158,11,.35)}
+    label{display:block;color:#c9d3e5;font-size:13px;font-weight:700;margin:10px 0 6px}
+    input, select, textarea{
+      width:100%;
+      border:1px solid var(--line);
+      background:#070c18;
+      color:var(--text);
+      border-radius:13px;
+      padding:11px 12px;
+      outline:none;
+      font-size:14px;
+    }
+    textarea{min-height:86px;resize:vertical}
+    input:focus,select:focus,textarea:focus{border-color:rgba(56,189,248,.7);box-shadow:0 0 0 3px rgba(56,189,248,.13)}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+    .row4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    button,.btn{
+      border:0;border-radius:13px;padding:11px 13px;
+      background:linear-gradient(135deg,var(--accent),#67e8f9);
+      color:#031321;font-weight:900;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;
+      margin-top:10px;
+    }
+    button:hover,.btn:hover{filter:brightness(1.08)}
+    button.secondary{background:#263650;color:var(--text)}
+    button.good{background:linear-gradient(135deg,var(--accent2),#86efac);color:#04150b}
+    button.warn{background:linear-gradient(135deg,var(--warn),#fcd34d);color:#201200}
+    button.danger{background:linear-gradient(135deg,var(--danger),#fb7185);color:#fff}
+    button.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+    .btnrow{display:flex;gap:10px;flex-wrap:wrap}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+    th{color:#cbd5e1;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+    tr:hover td{background:rgba(255,255,255,.015)}
+    .table-wrap{overflow:auto}
+    .muted{color:var(--muted)}
+    .small{font-size:12px;color:var(--muted)}
+    .workout-list{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+    .exercise-item{
+      padding:12px;border-radius:14px;background:rgba(29,42,68,.45);border:1px solid rgba(255,255,255,.06);
+      display:flex;justify-content:space-between;gap:12px;align-items:flex-start;
+    }
+    .exercise-item b{display:block;margin-bottom:5px}
+    .exercise-item small{color:var(--muted)}
+    .calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+    .daybox{
+      padding:13px;border-radius:16px;border:1px solid var(--line);background:rgba(29,42,68,.55);
+      min-height:110px;
+    }
+    .daybox.today{outline:2px solid rgba(56,189,248,.8)}
+    .daybox h4{margin:0 0 8px;font-size:14px}
+    .daybox p{margin:0;color:var(--muted);font-size:12px}
+    .progress{
+      height:10px;border-radius:999px;background:#07101e;overflow:hidden;border:1px solid rgba(255,255,255,.06);
+      margin-top:8px;
+    }
+    .bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%}
+    .chart{
+      width:100%;height:250px;border-radius:16px;background:#070c18;border:1px solid var(--line);
+      overflow:hidden;
+    }
+    .chart svg{width:100%;height:100%;display:block}
+    .empty{
+      padding:22px;border:1px dashed var(--line);border-radius:16px;color:var(--muted);
+      background:rgba(7,12,24,.55);
+    }
+    .message{
+      white-space:pre-wrap;background:#070c18;border:1px solid var(--line);
+      border-radius:16px;padding:14px;color:#e5e7eb;line-height:1.45;
+    }
+    .library-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    .lib-card{border:1px solid var(--line);border-radius:16px;background:rgba(29,42,68,.45);padding:14px}
+    .lib-card h4{margin:0 0 8px}
+    .lib-card p{color:var(--muted);font-size:13px;line-height:1.5}
+    .checklist{display:grid;gap:10px}
+    .checkline{display:flex;align-items:center;gap:10px;padding:10px;border-radius:13px;background:rgba(29,42,68,.45)}
+    .checkline input{width:auto}
+    .hidden{display:none!important}
+    @media(max-width:1050px){
+      .app{grid-template-columns:1fr}
+      aside{position:relative;height:auto}
+      nav{grid-template-columns:repeat(3,1fr)}
+      .content{padding:18px}
+      .span-8,.span-7,.span-6,.span-5,.span-4,.span-3{grid-column:span 12}
+      .calendar{grid-template-columns:repeat(2,1fr)}
+      .library-grid{grid-template-columns:1fr}
+    }
+    @media(max-width:680px){
+      aside{padding:14px}
+      nav{grid-template-columns:1fr 1fr}
+      .topbar{display:block}
+      .topbar h2{font-size:23px}
+      .row,.row3,.row4{grid-template-columns:1fr}
+      .calendar{grid-template-columns:1fr}
+      .exercise-item{display:block}
+      button,.btn{width:100%;justify-content:center}
+      .btnrow{display:grid;grid-template-columns:1fr}
+    }
+
+    .onboard{
+      position:fixed;inset:0;z-index:9999;
+      display:grid;place-items:center;
+      background:rgba(2,6,23,.78);
+      backdrop-filter:blur(10px);
+      padding:18px;
+    }
+    .onboard.hidden{display:none!important}
+    .onboard-card{
+      width:min(560px,100%);
+      border:1px solid rgba(56,189,248,.35);
+      background:linear-gradient(180deg, rgba(16,24,39,.98), rgba(7,12,24,.98));
+      border-radius:24px;
+      padding:24px;
+      box-shadow:0 30px 90px rgba(0,0,0,.55);
+    }
+    .onboard-card h2{margin:0 0 8px;font-size:26px}
+    .onboard-card p{color:var(--muted);line-height:1.55;margin:0 0 14px}
+    .onboard-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .hello-line{
+      font-size:14px;color:#cbd5e1;margin-top:8px;
+    }
+
+    @media print{
+      aside,.btnrow,button,.tabs{display:none!important}
+      body{background:#fff;color:#111}
+      .card{box-shadow:none;border-color:#ddd;background:#fff}
+      .app{display:block}
+      .content{max-width:none}
+    }
+  </style>
+</head>
+<body>
+
+  <div id="onboard" class="onboard hidden">
+    <div class="onboard-card">
+      <span class="pill">İlk kurulum</span>
+      <h2>Fit Takip Paneline hoş geldin</h2>
+      <p>Site seni adınla karşılasın ve mesajları sana göre hazırlasın. Veriler sadece bu cihazdaki tarayıcıda saklanır.</p>
+      <label>Adın veya hitabın</label>
+      <input id="onboardName" placeholder="Örn: Emir, Ahmet, Ali..." />
+      <label>Durum</label>
+      <select id="onboardMode">
+        <option value="prep">Hazırlık modu - henüz başlamadım</option>
+        <option value="active">Aktif - spora başladım</option>
+      </select>
+      <div class="onboard-actions">
+        <button onclick="finishOnboarding()">Başla</button>
+        <button class="secondary" onclick="skipOnboarding()">Şimdilik geç</button>
+      </div>
+      <p class="small" style="margin-top:14px;">Daha sonra Ayarlar bölümünden adını değiştirebilirsin.</p>
+    </div>
+  </div>
+
+  <div class="app">
+    <aside>
+      <div class="brand">
+        <div class="logo">FIT</div>
+        <div>
+          <h1>Fit Takip Paneli V2</h1>
+          <small>Hazırlık + takip sistemi</small>
+        </div>
+      </div>
+      <nav id="nav">
+        <button class="active" data-tab="dashboard">🏠 Dashboard</button>
+        <button data-tab="plan">📅 Haftalık Plan</button>
+        <button data-tab="training">🏋️ Antrenman Gir</button>
+        <button data-tab="progress">📈 Grafikler</button>
+        <button data-tab="nutrition">🍽️ Beslenme</button>
+        <button data-tab="report">📋 Haftalık Rapor</button>
+        <button data-tab="library">📚 Hareket Kütüphanesi</button>
+        <button data-tab="settings">⚙️ Ayarlar</button>
+      </nav>
+      <div class="sidebar-card">
+        <b>Hazırlık modu</b>
+        <p>Spora başlamadan da sistemi kurabilirsin. Veri girmeye başladığın gün grafikler ve raporlar dolmaya başlar.</p><p><b>Paylaşımlı kullanım:</b> Linki alan herkes kendi tarayıcısında ayrı veri tutar. Veriler sana gelmez ve kullanıcılar birbirinin verisini görmez.</p>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section id="dashboard" class="tab">
+        <div class="topbar">
+          <div>
+            <h2>Dashboard</h2>
+            <p id="dashboardSubtitle">Bugünkü plan, takip özeti ve hazır WhatsApp mesajı.</p><div id="helloLine" class="hello-line"></div><p class="small">Genel fitness takip şablonudur; sağlık sorunu veya özel beslenme ihtiyacı olanlar uzmana danışmalıdır.</p>
+          </div>
+          <div class="btnrow">
+            <button class="secondary" onclick="copyTodayMessage()">Mesajı Kopyala</button>
+            <button class="good" onclick="openWhatsapp()">WhatsApp’ta Aç</button>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card span-3 metric">
+            <span class="label">Bugünkü gün</span>
+            <span class="value" id="todayDay">-</span>
+            <span class="hint" id="todayType">-</span>
+          </div>
+          <div class="card span-3 metric">
+            <span class="label">Son kilo</span>
+            <span class="value" id="lastWeight">-</span>
+            <span class="hint">Sabah ölçümü</span>
+          </div>
+          <div class="card span-3 metric">
+            <span class="label">7 kayıt ortalaması</span>
+            <span class="value" id="avgWeight">-</span>
+            <span class="hint">Tek güne takılma</span>
+          </div>
+          <div class="card span-3 metric">
+            <span class="label">Bu hafta antrenman</span>
+            <span class="value" id="weekTrainingCount">0/5</span>
+            <span class="hint">Tamamlama takibi</span>
+          </div>
+
+          <div class="card span-7">
+            <h3>Bugünkü Antrenman</h3>
+            <p class="sub" id="todayNote"></p>
+            <ul class="workout-list" id="todayWorkoutList"></ul>
+          </div>
+
+          <div class="card span-5">
+            <h3>Bugünkü Beslenme Görevi</h3>
+            <div id="todayFood" class="message"></div>
+            <div class="btnrow">
+              <button class="secondary" onclick="switchTab('nutrition')">Beslenme Kaydı Gir</button>
+              <button class="secondary" onclick="switchTab('training')">Antrenman Gir</button>
+            </div>
+          </div>
+
+          <div class="card span-6">
+            <h3>Öncelikli Bölge Paneli</h3>
+            <p class="sub">Öne almak istediğin bölgelere göre haftalık kaliteli set takibi.</p>
+            <div id="priorityPanel"></div>
+          </div>
+
+          <div class="card span-6">
+            <h3>Bugünkü WhatsApp Mesajı</h3>
+            <div id="todayMessage" class="message"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="plan" class="tab hidden">
+        <div class="topbar">
+          <div>
+            <h2>Haftalık Plan</h2>
+            <p>Programın haftalık akışı ve günlere göre odak bölgeleri.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="card span-12">
+            <h3>Takvim</h3>
+            <div class="calendar" id="weekCalendar"></div>
+          </div>
+          <div class="card span-6">
+            <h3>İlk 2 Hafta Kuralı</h3>
+            <div class="message">Ara verdiysen veya yeni başlıyorsan ilk 2 hafta eski ağırlıklara dönmeye çalışma.
+Ana hareketlerde RIR 2-3, izolasyonlarda kontrollü form.
+Amaç: hareketleri hatırlamak, ağrısız ritim kurmak, düzeni oturtmak.</div>
+          </div>
+          <div class="card span-6">
+            <h3>Progressive Overload Kuralı</h3>
+            <div class="message">Örnek hedef 3x8-10 ise:
+60 kg 8-8-7 → sonraki hedef 8-8-8 veya 9-8-8.
+10-10-10 olursa sonraki hafta ağırlığı küçük artır.
+Failure sadece makine/izolasyon son setlerde kullanılmalı.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="training" class="tab hidden">
+        <div class="topbar">
+          <div>
+            <h2>Antrenman Gir</h2>
+            <p>Başladığında buradan setleri, ağırlığı, tekrarları ve RIR değerini kaydedeceksin.</p>
+          </div>
+          <div class="btnrow">
+            <button class="secondary" onclick="loadTodayTrainingForm()">Bugünün Planını Yükle</button>
+            <button class="good" onclick="saveTrainingSession()">Antrenmanı Kaydet</button>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="card span-4">
+            <h3>Seans Bilgisi</h3>
+            <label>Tarih</label>
+            <input id="sessionDate" type="date" />
+            <label>Gün seç</label>
+            <select id="sessionDay" onchange="renderTrainingForm()"></select>
+            <label>Genel enerji (1-10)</label>
+            <input id="sessionEnergy" type="number" min="1" max="10" placeholder="Örn: 8" />
+            <label>Seans notu</label>
+            <textarea id="sessionNote" placeholder="Örn: İlk gün hafif girdim, göğüste iyi hissettim..."></textarea>
+          </div>
+          <div class="card span-8">
+            <h3>Hareketler</h3>
+            <p class="sub">Kg ve tekrarları girdiğinde gelecekte akıllı hedef önerileri oluşacak.</p>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Tamam</th>
+                    <th>Hareket</th>
+                    <th>Hedef</th>
+                    <th>Kg</th>
+                    <th>Tekrarlar</th>
+                    <th>RIR</th>
+                    <th>Akıllı hedef</th>
+                  </tr>
+                </thead>
+                <tbody id="trainingFormRows"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card span-12">
+            <h3>Son Antrenmanlar</h3>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Tarih</th><th>Gün</th><th>Enerji</th><th>Hareket sayısı</th><th>Not</th><th></th></tr></thead>
+                <tbody id="sessionHistoryRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="progress" class="tab hidden">
+        <div class="topbar">
+          <div>
+            <h2>Grafikler</h2>
+            <p>Veri girmeye başlayınca kilo ve hareket gelişimlerini buradan göreceksin.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="card span-6">
+            <h3>Kilo Grafiği</h3>
+            <p class="sub">Tek günlük kilodan çok ortalamaya bak.</p>
+            <div id="weightChart" class="chart"></div>
+          </div>
+          <div class="card span-6">
+            <h3>Hareket Gelişimi</h3>
+            <label>Hareket seç</label>
+            <select id="chartExercise" onchange="renderExerciseChart()"></select>
+            <div id="exerciseChart" class="chart"></div>
+          </div>
+          <div class="card span-12">
+            <h3>Hareket Geçmişi</h3>
+            <label>Filtre</label>
+            <input id="historyFilter" placeholder="Örn: chest, curl, row..." oninput="renderDetailedHistory()" />
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Tarih</th><th>Gün</th><th>Hareket</th><th>Kg</th><th>Tekrar</th><th>RIR</th><th>Hacim</th></tr></thead>
+                <tbody id="detailedHistoryRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="nutrition" class="tab hidden">
+        <div class="topbar">
+          <div>
+            <h2>Beslenme Takibi</h2>
+            <p>Kalori takıntısı yok; öğün, protein, su ve takviye düzeni var.</p>
+          </div>
+          <div class="btnrow">
+            <button class="good" onclick="saveNutrition()">Beslenmeyi Kaydet</button>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="card span-5">
+            <h3>Günlük Checklist</h3>
+            <label>Tarih</label>
+            <input id="nutriDate" type="date" />
+            <label>Gün tipi</label>
+            <select id="nutriType">
+              <option>Antrenman günü</option>
+              <option>Off day</option>
+            </select>
+            <div class="checklist">
+              <label class="checkline"><input type="checkbox" id="cBreakfast" /> Kahvaltı yaptım</label>
+              <label class="checkline"><input type="checkbox" id="cProtein" /> Gün içinde protein öğünleri tamam</label>
+              <label class="checkline"><input type="checkbox" id="cWater" /> Su içtim</label>
+              <label class="checkline"><input type="checkbox" id="cCreatine" /> Kreatin aldım</label>
+              <label class="checkline"><input type="checkbox" id="cPowder" /> Protein tozu aldım / gerekmedi</label>
+              <label class="checkline"><input type="checkbox" id="cFruitVeg" /> Sebze/meyve yedim</label>
+              <label class="checkline"><input type="checkbox" id="cPost" /> Antrenman sonrası öğünü yaptım</label>
+            </div>
+            <label>Su miktarı</label>
+            <input id="waterAmount" placeholder="Örn: 2.5 L" />
+            <label>Yemek notu</label>
+            <textarea id="foodNote" placeholder="Örn: 60 g yulaf + süt + 2 yumurta / tavuk pilav yoğurt..."></textarea>
+          </div>
+          <div class="card span-7">
+            <h3>Beslenme Şablonu</h3>
+            <div id="nutritionTemplate" class="message"></div>
+            <h3 style="margin-top:16px;">Son Kayıtlar</h3>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Tarih</th><th>Tip</th><th>Skor</th><th>Su</th><th>Not</th><th></th></tr></thead>
+                <tbody id="nutritionRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="report" class="tab hidden">
+        <div class="topbar">
+          <div>
+            <h2>Haftalık Rapor</h2>
+            <p>Pazar günü veya haftanın sonunda buradan genel duruma bak.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="card span-4 metric">
+            <span class="label">Bu hafta antrenman</span>
+            <span class="value" id="reportSessions">0/5</span>
+            <span class="hint">Kayıtlı seans sayısı</span>
+          </div>
+          <div class="card span-4 metric">
+            <span class="label">Haftalık kilo ort.</span>
+            <span class="value" id="reportAvgWeight">-</span>
+            <span class="hint">Varsa son 7 kayıt</span>
+          </div>
+          <div class="card span-4 metric">
+            <span class="label">Beslenme kayıtları</span>
+            <span class="value" id="reportNutri">0</span>
+            <span class="hint">Bu haftaki checklist</span>
+          </div>
+          <div class="card span-6">
+            <h3>Kas Grubu Set Hacmi</h3>
+            <div id="volumeBars"></div>
+          </div>
+          <div class="card span-6">
+            <h3>Haftalık Yorum</h3>
+            <div id="weeklyComment" class="message"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="library" class="tab hidden">
+        <div class="topbar">
+          <div>
+            <h2>Hareket Kütüphanesi</h2>
+            <p>Hareketlerin amacı, dikkat noktası ve tekrar aralıkları.</p>
+          </div>
+        </div>
+        <div class="card">
+          <label>Hareket ara</label>
+          <input id="librarySearch" placeholder="Örn: incline, curl, leg..." oninput="renderLibrary()" />
+          <div class="library-grid" id="libraryGrid" style="margin-top:14px;"></div>
+        </div>
+      </section>
+
+      <section id="settings" class="tab hidden">
+        <div class="topbar">
+          <div>
+            <h2>Ayarlar</h2>
+            <p>Hazırlık modu, WhatsApp, veri yedekleme ve sıfırlama.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="card span-6">
+            <h3>Profil</h3>
+            <label>Hitap / isim</label>
+            <input id="profileName" placeholder="Kullanıcı" />
+            <label>Program durumu</label>
+            <select id="profileMode">
+              <option value="prep">Hazırlık modu - henüz başlamadım</option>
+              <option value="active">Aktif - spora başladım</option>
+            </select>
+            <label>Başlangıç tarihi</label>
+            <input id="profileStart" type="date" />
+            <label>WhatsApp numarası</label>
+            <input id="profilePhone" placeholder="905xxxxxxxxx" />
+            <p class="small">Otomatik gönderim yok; buton mesajı WhatsApp’ta hazır açar.</p>
+            <button onclick="saveProfile()">Profili Kaydet</button>
+          </div>
+          <div class="card span-6">
+            <h3>Veri Yönetimi</h3>
+            <p class="sub">Verilerin bu tarayıcıda saklanır. Bilgisayar değiştirirsen JSON yedeği al.</p>
+            <div class="btnrow">
+              <button class="secondary" onclick="exportData()">JSON Yedek İndir</button>
+              <button class="danger" onclick="clearData()">Tüm Verileri Sil</button>
+            </div>
+            <label>JSON içe aktar</label>
+            <textarea id="importJson" placeholder="Yedek JSON içeriğini buraya yapıştır."></textarea>
+            <button onclick="importData()">İçe Aktar</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+<script>
+const weekPlan = {
+  1:{key:"pushA", day:"Pazartesi", short:"Push A", type:"Göğüs ağır + omuz + arka kol", tag:"push", note:"Göğüs öncelik. İlk hareketlerde performans takip edilir.", food:"Kahvaltı: 60-70 g yulaf + 250-300 ml süt + 1 muz + 2 yumurta. Antrenman sonrası: 1 ölçek protein + 180-220 g tavuk + 80-100 g pirinç/bulgur + 200-300 g yoğurt + salata.", exercises:[
+    e("Bench Press veya Plate Loaded Chest Press",3,"6-8",2,["Göğüs","Triceps","Ön omuz"]),
+    e("Smith Low Incline Press",3,"8-10",2,["Üst göğüs","Ön omuz","Triceps"]),
+    e("Chest Fly Machine",2,"12-15",1,["Göğüs"]),
+    e("Shoulder Press Machine",2,"8-10",2,["Omuz","Triceps"]),
+    e("Lateral Raise",3,"12-20",1,["Yan omuz"]),
+    e("Triceps Pushdown",3,"10-15",1,["Triceps"]),
+    e("Overhead Rope Extension",2,"10-15",1,["Triceps"])
+  ]},
+  2:{key:"pullA", day:"Salı", short:"Pull A", type:"Sırt + biceps", tag:"pull", note:"Sırt kalınlık/genişlik + biceps.", food:"Kahvaltı: 3 yumurta + 2-3 dilim ekmek + 50-70 g peynir/lor + sebze. Antrenman sonrası: tavuk/balık/baklagil + pilav/bulgur + yoğurt.", exercises:[
+    e("Lat Pulldown",3,"8-12",2,["Sırt","Biceps"]),
+    e("Plate Loaded Row",3,"8-10",2,["Sırt","Biceps"]),
+    e("Cable Row",2,"10-12",1,["Sırt"]),
+    e("Face Pull veya Rear Delt Fly",3,"12-20",1,["Arka omuz","Üst sırt"]),
+    e("Dumbbell Curl",3,"8-12",1,["Biceps"]),
+    e("Cable Curl",2,"10-15",1,["Biceps"]),
+    e("Hammer Curl",2,"10-12",1,["Biceps","Ön kol"])
+  ]},
+  3:{key:"legs", day:"Çarşamba", short:"Legs", type:"Bacak + karın", tag:"legs", note:"Ana bacak günü. Kontrollü form ve tam hareket açıklığı.", food:"Kahvaltı güçlü olsun. Antrenman sonrası: 200 g tavuk + 300-400 g patates veya 80-100 g pirinç/bulgur + yoğurt + salata.", exercises:[
+    e("Leg Press",3,"8-12",2,["Bacak","Kalça"]),
+    e("Smith Squat veya Hack Squat",3,"8-10",2,["Bacak","Kalça"]),
+    e("Romanian Deadlift",3,"8-10",2,["Arka bacak","Kalça","Bel çevresi"]),
+    e("Leg Extension",2,"12-15",1,["Ön bacak"]),
+    e("Seated Leg Curl",3,"10-15",1,["Arka bacak"]),
+    e("Calf Raise",4,"12-20",1,["Baldır"]),
+    e("Cable Crunch veya Plank",3,"10-15 / süre",2,["Karın"])
+  ]},
+  4:{key:"off1", day:"Perşembe", short:"Off", type:"Dinlenme", tag:"off", note:"Yürüyüş, esneme, toparlanma.", food:"Off day: karbonhidratı tamamen kesme ama antrenman günü kadar yüksek tutma. Yumurta + tavuk/baklagil + yoğurt + sebze iyi gider.", exercises:[
+    e("Rahat yürüyüş",1,"20-40 dk",3,["Genel aktivite"]),
+    e("Esneme / mobilite",1,"5-10 dk",3,["Toparlanma"])
+  ]},
+  5:{key:"pushB", day:"Cuma", short:"Push B", type:"Göğüs hacim + kol öncelik", tag:"push", note:"Cuma omuzla başlama; göğüs hacim günü.", food:"Kahvaltı: 60 g yulaf + 250 ml süt + muz + 2 yumurta. Antrenman sonrası protein + tavuk/pilav/yoğurt/salata.", exercises:[
+    e("Smith Low Incline Press",3,"8-10",2,["Üst göğüs","Triceps"]),
+    e("Dumbbell Press veya Chest Press",3,"8-12",2,["Göğüs","Triceps"]),
+    e("Chest Fly Machine veya Cable Fly",3,"12-15",1,["Göğüs"]),
+    e("Lateral Raise",4,"12-20",1,["Yan omuz"]),
+    e("Shoulder Press Machine",2,"8-10",2,["Omuz","Triceps"]),
+    e("Close Grip Press veya Dips Machine",2,"8-10",2,["Triceps","Göğüs"]),
+    e("Rope Pushdown",2,"10-15",1,["Triceps"]),
+    e("Overhead Rope Extension",2,"12-15",1,["Triceps"])
+  ]},
+  6:{key:"pullB", day:"Cumartesi", short:"Pull B", type:"Sırt + biceps + bacak destek", tag:"pull", note:"Biceps kalitesi ve hafif bacak arkası desteği.", food:"Antrenman günü düzeni. Kol odaklı gün olduğu için öğünleri atlama; protein tozunu antrenman sonrası kullanabilirsin.", exercises:[
+    e("Close Grip Lat Pulldown",3,"8-12",2,["Sırt","Biceps"]),
+    e("Wide Grip Row",3,"8-10",2,["Sırt"]),
+    e("Single Arm Dumbbell Row",2,"10-12",1,["Sırt"]),
+    e("Rear Delt Fly",3,"12-20",1,["Arka omuz"]),
+    e("Incline DB Curl veya Preacher Curl",3,"8-12",1,["Biceps"]),
+    e("Cable Curl",2,"10-15",1,["Biceps"]),
+    e("Hammer Curl",2,"10-12",1,["Biceps","Ön kol"]),
+    e("Leg Curl",2,"12-15",1,["Arka bacak"]),
+    e("Calf Raise",3,"12-20",1,["Baldır"])
+  ]},
+  0:{key:"off2", day:"Pazar", short:"Off", type:"Dinlenme + haftalık kontrol", tag:"off", note:"Haftalık rapor, alışveriş, hazırlık.", food:"Off day: yumurta, yoğurt, tavuk/baklagil, sebze. Çok aç kalma; yarın Push A var.", exercises:[
+    e("Rahat yürüyüş",1,"20-40 dk",3,["Genel aktivite"]),
+    e("Haftalık rapora bak",1,"5 dk",3,["Takip"])
+  ]}
+};
+function e(name, sets, reps, rir, muscles){return {name, sets, reps, rir, muscles}}
+
+const library = [
+  lib("Bench Press / Chest Press","Göğüs","Ana göğüs gücü ve hacim hareketi.","Kürek kemiklerini geriye al, göğsü yukarıda tut, kontrollü indir.","Omuzu öne düşürmek, ağırlığı zıplatmak, dirsekleri fazla açmak.","6-8 / RIR 1-2"),
+  lib("Smith Low Incline Press","Üst göğüs","Üst göğüs önceliği için ana hareket.","Sehpayı düşük incline tut, barı üst göğüse indir, göğüsle it.","Çok dik açı yapıp omuza çevirmek, bel boşluğunu abartmak.","8-10 / RIR 1-2"),
+  lib("Chest Fly Machine / Cable Fly","Göğüs","Göğüs sıkıştırma ve kas hissi.","Dirseği hafif kır, kontrollü aç, göğsü sıkıştır.","Ağırlığı savurmak, omuzu öne almak, çok düşük tekrar yapmak.","12-15 / son set zor olabilir"),
+  lib("Lateral Raise","Yan omuz","Omuz genişliği görünümü için ana izolasyon.","Dirsek hafif kırık, ağırlığı yana kaldır, sallanma yok.","Çok ağır alıp trapeze bindirmek, belden savurmak.","12-20 / son set zor olabilir"),
+  lib("Triceps Pushdown","Triceps","Triceps dış/yan baş odaklı izolasyon.","Dirsek sabit, aşağıda sıkıştır, kontrollü bırak.","Dirseği öne-arkaya oynatmak, gövdeyle bastırmak.","10-15 / RIR 1"),
+  lib("Overhead Rope Extension","Triceps uzun baş","Kolun dolu görünmesine katkı veren uzun baş hareketi.","Dirsekleri sabit tut, tam esnet, yukarıda sıkıştır.","Belden savurmak, dirsekleri fazla açmak.","10-15 / RIR 1"),
+  lib("Lat Pulldown","Sırt","Kanat/lat gelişimi için temel çekiş.","Göğsü yukarıda tut, dirsekleri aşağı çek, boyuna çekme.","Barı enseye çekmek, sallanmak, bicepsle çekmek.","8-12 / RIR 1-2"),
+  lib("Plate Loaded Row / Cable Row","Sırt kalınlık","Orta sırt ve sırt kalınlığı için ana hareket.","Göğüs sabit, dirsekleri geriye sür, kürek kemiklerini sık.","Belden savurmak, yarım tekrar, omuzu kulaklara çekmek.","8-12 / RIR 1-2"),
+  lib("Rear Delt Fly / Face Pull","Arka omuz","Omuz sağlığı ve arka omuz dengesi.","Kontrollü çek, omuzu geriye al, hafif ağırlık kullan.","Çok ağır alıp sırtla çekmek, boynu kasmak.","12-20 / RIR 1"),
+  lib("Dumbbell Curl / Cable Curl","Biceps","Biceps hacmi ve kontrol.","Dirsek sabit, bileği kırma, tepede sıkıştır.","Sallanmak, omuzu öne almak, yarım tekrar.","8-15 / son set zor olabilir"),
+  lib("Hammer Curl","Biceps + ön kol","Kol kalınlığına katkı veren brachialis/ön kol hareketi.","Nötr tutuş, kontrollü kaldır, dirsek sabit.","Vücudu sallamak, bileği bükmek.","10-12 / RIR 1"),
+  lib("Leg Press","Bacak","Bacak hacmi için güvenli ana hareketlerden biri.","Dizleri kilitleme, kontrollü in, ayaklar sabit.","Aşırı derine bel yuvarlamak, dizleri içeri düşürmek.","8-12 / RIR 1-2"),
+  lib("Romanian Deadlift","Arka bacak + kalça","Arka zincir ve kalça için temel hareket.","Kalçayı geriye gönder, sırtı nötr tut, diz hafif kırık.","Belden bükülmek, barı vücuttan uzaklaştırmak, ego ağırlığı.","8-10 / RIR 2"),
+  lib("Leg Extension","Ön bacak","Quadriceps izolasyonu.","Üstte sıkıştır, kontrollü indir, belini sabit tut.","Ağırlığı fırlatmak, dizde ağrıya rağmen zorlamak.","12-15 / son set zor olabilir"),
+  lib("Leg Curl","Arka bacak","Hamstring izolasyonu.","Tam bük, üstte sıkıştır, kontrollü bırak.","Kalçayı kaldırmak, hareketi yarım yapmak.","10-15 / RIR 1"),
+  lib("Calf Raise","Baldır","Baldır hacmi ve ayak bileği kuvveti.","Altta esnet, üstte sıkıştır, hızlı sekme yapma.","Yarım tekrar, çok hızlı tempo.","12-20 / RIR 1")
+];
+function lib(name,muscle,goal,cue,mistake,rep){return {name,muscle,goal,cue,mistake,rep}}
+
+const defaultData = {
+  profile:{name:"Kullanıcı", mode:"prep", startDate:"", phone:"", onboarded:false},
+  weights:[],
+  sessions:[],
+  nutrition:[]
+};
+let data = JSON.parse(localStorage.getItem("fitPanelV2") || JSON.stringify(defaultData));
+function save(){localStorage.setItem("fitPanelV2", JSON.stringify(data)); renderAll();}
+function todayISO(){return new Date().toISOString().slice(0,10)}
+function dayPlan(d = new Date()){return weekPlan[d.getDay()]}
+function mondayOf(date){
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  return new Date(d.setDate(diff));
+}
+function isThisWeek(dateStr){
+  const m = mondayOf(new Date());
+  m.setHours(0,0,0,0);
+  const end = new Date(m); end.setDate(m.getDate()+7);
+  const d = new Date(dateStr+"T00:00:00");
+  return d >= m && d < end;
+}
+function tagClass(tag){return tag==="push"?"push":tag==="pull"?"pull":tag==="legs"?"legs":"off"}
+function setDefaults(){
+  document.getElementById("sessionDate").value = todayISO();
+  document.getElementById("nutriDate").value = todayISO();
+  document.getElementById("profileName").value = data.profile.name || "Kullanıcı";
+  document.getElementById("profileMode").value = data.profile.mode || "prep";
+  document.getElementById("profileStart").value = data.profile.startDate || "";
+  document.getElementById("profilePhone").value = data.profile.phone || "";
+  const select = document.getElementById("sessionDay");
+  select.innerHTML = Object.values(weekPlan).filter(x=>x.key).map((p, idx)=>`<option value="${p.key}">${p.day} - ${p.short}</option>`).join("");
+  document.getElementById("sessionDay").value = dayPlan().key;
+}
+document.querySelectorAll("nav button").forEach(btn=>{
+  btn.addEventListener("click",()=>switchTab(btn.dataset.tab));
+});
+function switchTab(id){
+  document.querySelectorAll(".tab").forEach(t=>t.classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active", b.dataset.tab===id));
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function planByKey(key){return Object.values(weekPlan).find(p=>p.key===key) || dayPlan();}
+function todayMessage(){
+  const p = dayPlan();
+  const name = data.profile.name || "Kullanıcı";
+  const modeLine = (data.profile.mode==="prep") ? "Not: Şu an hazırlık modundasın. Spora başlayınca kayıt girmeye başla." : "Bugün kayıtlarını girmeyi unutma.";
+  return `Merhaba ${name} 💪
+
+Bugün: ${p.day} - ${p.short}
+Odak: ${p.type}
+
+${modeLine}
+
+Antrenman:
+- ${p.exercises.map(x=>`${x.name} — ${x.sets}x${x.reps}, RIR ${x.rir}`).join("\n- ")}
+
+Beslenme:
+${p.food}
+
+Takip:
+- Sabah kilonu gir
+- Kg / tekrar / RIR kaydet
+- Kreatin: 5 g civarı
+- Su + protein öğünlerini aksatma`;
+}
+function renderDashboard(){
+  const p = dayPlan();
+  document.getElementById("dashboardSubtitle").textContent = data.profile.mode==="prep" ? "Hazırlık modundasın. Site hazır; spora başladığında veri girmeye başlarsın." : "Bugünkü plan, takip özeti ve hazır WhatsApp mesajı.";
+  document.getElementById("helloLine").textContent = `Merhaba ${data.profile.name || "Kullanıcı"}, bugün planın aşağıda hazır.`;
+  document.getElementById("todayDay").textContent = p.day;
+  document.getElementById("todayType").innerHTML = `<span class="pill ${tagClass(p.tag)}">${p.short} — ${p.type}</span>`;
+  document.getElementById("todayNote").textContent = p.note;
+  document.getElementById("todayWorkoutList").innerHTML = p.exercises.map(ex=>`
+    <li class="exercise-item">
+      <div><b>${ex.name}</b><small>${ex.muscles.join(", ")}</small></div>
+      <div><span class="pill">${ex.sets}x${ex.reps}</span><span class="pill">RIR ${ex.rir}</span></div>
+    </li>`).join("");
+  document.getElementById("todayFood").textContent = p.food;
+  document.getElementById("todayMessage").textContent = todayMessage();
+
+  const sortedWeights = [...data.weights].sort((a,b)=>a.date.localeCompare(b.date));
+  const last = sortedWeights[sortedWeights.length-1];
+  document.getElementById("lastWeight").textContent = last ? `${last.kg} kg` : "-";
+  const last7 = sortedWeights.slice(-7).map(x=>Number(x.kg)).filter(x=>!isNaN(x));
+  document.getElementById("avgWeight").textContent = last7.length ? `${(last7.reduce((a,b)=>a+b,0)/last7.length).toFixed(1)} kg` : "-";
+  document.getElementById("weekTrainingCount").textContent = `${data.sessions.filter(s=>isThisWeek(s.date)).length}/5`;
+
+  renderPriorityPanel();
+}
+function renderPriorityPanel(){
+  const volumes = weeklyVolume();
+  const targets = [
+    ["Göğüs", volumes["Göğüs"] || 0, 14, 16],
+    ["Biceps", volumes["Biceps"] || 0, 12, 14],
+    ["Triceps", volumes["Triceps"] || 0, 12, 14]
+  ];
+  document.getElementById("priorityPanel").innerHTML = targets.map(([name,val,min,max])=>{
+    const pct = Math.min(100, Math.round((val/min)*100));
+    return `<div style="margin:12px 0">
+      <div style="display:flex;justify-content:space-between;gap:10px"><b>${name}</b><span class="muted">${val} set / hedef ${min}-${max}</span></div>
+      <div class="progress"><div class="bar" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join("") || `<div class="empty">Veri başlayınca set hacmi burada görünecek.</div>`;
+}
+function renderCalendar(){
+  const todayKey = dayPlan().key;
+  document.getElementById("weekCalendar").innerHTML = [1,2,3,4,5,6,0].map(i=>{
+    const p = weekPlan[i];
+    return `<div class="daybox ${p.key===todayKey?'today':''}">
+      <h4>${p.day}</h4>
+      <span class="pill ${tagClass(p.tag)}">${p.short}</span>
+      <p>${p.type}</p>
+      <p style="margin-top:8px">${p.exercises.length} görev</p>
+    </div>`;
+  }).join("");
+}
+function loadTodayTrainingForm(){
+  document.getElementById("sessionDay").value = dayPlan().key;
+  document.getElementById("sessionDate").value = todayISO();
+  renderTrainingForm();
+}
+function renderTrainingForm(){
+  const p = planByKey(document.getElementById("sessionDay").value);
+  document.getElementById("trainingFormRows").innerHTML = p.exercises.map((ex, idx)=>{
+    const smart = smartTarget(ex.name, ex.sets, ex.reps);
+    return `<tr data-idx="${idx}">
+      <td><input type="checkbox" class="tf-done" ${p.tag==="off"?"":"checked"} /></td>
+      <td><b>${ex.name}</b><br><span class="small">${ex.muscles.join(", ")}</span></td>
+      <td>${ex.sets}x${ex.reps}<br><span class="small">RIR ${ex.rir}</span></td>
+      <td><input class="tf-kg" type="number" step="0.5" placeholder="kg" /></td>
+      <td><input class="tf-reps" placeholder="8-8-7" /></td>
+      <td><input class="tf-rir" type="number" step="0.5" placeholder="${ex.rir}" /></td>
+      <td><span class="small">${smart}</span></td>
+    </tr>`;
+  }).join("");
+}
+function smartTarget(name, sets, repsRange){
+  const logs = [];
+  data.sessions.forEach(s=>{
+    (s.exercises||[]).forEach(ex=>{
+      if(ex.name===name && ex.kg){
+        logs.push({date:s.date, kg:Number(ex.kg), reps:ex.reps, rir:ex.rir});
+      }
+    });
+  });
+  logs.sort((a,b)=>a.date.localeCompare(b.date));
+  const last = logs[logs.length-1];
+  if(!last) return "İlk kayıt: eski gücüne göre değil, RIR 2-3 ile başla.";
+  const upper = parseUpperRep(repsRange);
+  const total = sumReps(last.reps);
+  const targetTotal = Number(sets) * upper;
+  if(total >= targetTotal && last.kg){
+    return `Son: ${last.kg} kg / ${last.reps}. Hedef dolmuşsa küçük ağırlık artır.`;
+  }
+  return `Son: ${last.kg} kg / ${last.reps}. Aynı kiloda toplam 1-2 tekrar artırmayı dene.`;
+}
+function parseUpperRep(s){
+  const nums = String(s).match(/\d+/g);
+  return nums ? Number(nums[nums.length-1]) : 12;
+}
+function sumReps(s){
+  const nums = String(s).match(/\d+/g);
+  return nums ? nums.map(Number).reduce((a,b)=>a+b,0) : 0;
+}
+function saveTrainingSession(){
+  const p = planByKey(document.getElementById("sessionDay").value);
+  const rows = [...document.querySelectorAll("#trainingFormRows tr")];
+  const exercises = rows.map((r, idx)=>({
+    name:p.exercises[idx].name,
+    muscles:p.exercises[idx].muscles,
+    targetSets:p.exercises[idx].sets,
+    targetReps:p.exercises[idx].reps,
+    done:r.querySelector(".tf-done").checked,
+    kg:r.querySelector(".tf-kg").value,
+    reps:r.querySelector(".tf-reps").value,
+    rir:r.querySelector(".tf-rir").value
+  })).filter(x=>x.done || x.kg || x.reps);
+  data.sessions.push({
+    id:Date.now(),
+    date:document.getElementById("sessionDate").value || todayISO(),
+    day:p.short,
+    dayKey:p.key,
+    energy:document.getElementById("sessionEnergy").value,
+    note:document.getElementById("sessionNote").value,
+    exercises
+  });
+  document.getElementById("sessionEnergy").value="";
+  document.getElementById("sessionNote").value="";
+  save();
+  alert("Antrenman kaydedildi.");
+}
+function renderSessionHistory(){
+  const sorted = [...data.sessions].sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById("sessionHistoryRows").innerHTML = sorted.length ? sorted.slice(0,10).map(s=>`
+    <tr>
+      <td>${s.date}</td><td>${s.day}</td><td>${s.energy || "-"}</td><td>${(s.exercises||[]).length}</td><td>${s.note || ""}</td>
+      <td><button class="danger" onclick="deleteSession(${s.id})">Sil</button></td>
+    </tr>`).join("") : `<tr><td colspan="6" class="muted">Henüz kayıt yok. Başladığında dolacak.</td></tr>`;
+}
+function deleteSession(id){
+  if(confirm("Bu antrenman kaydı silinsin mi?")){
+    data.sessions = data.sessions.filter(s=>s.id!==id); save();
+  }
+}
+function renderDetailedHistory(){
+  const f = (document.getElementById("historyFilter").value || "").toLowerCase();
+  const rows = [];
+  data.sessions.forEach(s=>{
+    (s.exercises||[]).forEach(ex=>{
+      if(!f || ex.name.toLowerCase().includes(f)){
+        rows.push({date:s.date, day:s.day, ...ex});
+      }
+    });
+  });
+  rows.sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById("detailedHistoryRows").innerHTML = rows.length ? rows.map(x=>{
+    const vol = (Number(x.kg)||0) * sumReps(x.reps);
+    return `<tr><td>${x.date}</td><td>${x.day}</td><td>${x.name}</td><td>${x.kg||"-"}</td><td>${x.reps||"-"}</td><td>${x.rir||"-"}</td><td>${vol ? Math.round(vol) : "-"}</td></tr>`;
+  }).join("") : `<tr><td colspan="7" class="muted">Kayıt yok.</td></tr>`;
+}
+function renderNutritionTemplate(){
+  document.getElementById("nutritionTemplate").textContent =
+`Antrenman günü şablonu:
+- Kahvaltı: 60-70 g yulaf + 250-300 ml süt + 1 muz + 2 yumurta
+- Antrenman sonrası: 1 ölçek protein tozu + su
+- Ana öğün: 180-220 g tavuk + 80-100 g pirinç/bulgur + 200-300 g yoğurt + salata
+- Ara öğün: kefir/yoğurt + meyve
+
+Off day şablonu:
+- 3 yumurta + 2 dilim ekmek + peynir + sebze
+- Tavuk/baklagil + yoğurt + salata
+- Karbonhidratı tamamen kesme, sadece antrenman günü kadar yükseltme.`;
+}
+function saveNutrition(){
+  const checks = ["cBreakfast","cProtein","cWater","cCreatine","cPowder","cFruitVeg","cPost"];
+  const record = {
+    id:Date.now(),
+    date:document.getElementById("nutriDate").value || todayISO(),
+    type:document.getElementById("nutriType").value,
+    checks:Object.fromEntries(checks.map(id=>[id, document.getElementById(id).checked])),
+    water:document.getElementById("waterAmount").value,
+    note:document.getElementById("foodNote").value
+  };
+  data.nutrition.push(record);
+  checks.forEach(id=>document.getElementById(id).checked=false);
+  document.getElementById("waterAmount").value="";
+  document.getElementById("foodNote").value="";
+  save();
+  alert("Beslenme kaydedildi.");
+}
+function renderNutritionRows(){
+  const rows = [...data.nutrition].sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById("nutritionRows").innerHTML = rows.length ? rows.slice(0,12).map(r=>{
+    const score = Object.values(r.checks||{}).filter(Boolean).length;
+    return `<tr><td>${r.date}</td><td>${r.type}</td><td>${score}/7</td><td>${r.water || "-"}</td><td>${r.note || ""}</td><td><button class="danger" onclick="deleteNutrition(${r.id})">Sil</button></td></tr>`;
+  }).join("") : `<tr><td colspan="6" class="muted">Henüz kayıt yok.</td></tr>`;
+}
+function deleteNutrition(id){
+  if(confirm("Bu beslenme kaydı silinsin mi?")){
+    data.nutrition = data.nutrition.filter(n=>n.id!==id); save();
+  }
+}
+function addWeightRecord(date, kg){
+  data.weights.push({date, kg:Number(kg)}); save();
+}
+function renderCharts(){
+  renderWeightChart();
+  renderExerciseOptions();
+  renderExerciseChart();
+}
+function renderWeightChart(){
+  const points = [...data.weights].sort((a,b)=>a.date.localeCompare(b.date)).slice(-30).map(x=>({date:x.date, value:Number(x.kg)})).filter(x=>!isNaN(x.value));
+  document.getElementById("weightChart").innerHTML = makeLineChart(points, "kg");
+}
+function renderExerciseOptions(){
+  const names = new Set();
+  Object.values(weekPlan).forEach(p=>(p.exercises||[]).forEach(ex=>names.add(ex.name)));
+  data.sessions.forEach(s=>(s.exercises||[]).forEach(ex=>names.add(ex.name)));
+  const select = document.getElementById("chartExercise");
+  const old = select.value;
+  select.innerHTML = [...names].sort().map(n=>`<option value="${n}">${n}</option>`).join("");
+  if(old) select.value = old;
+}
+function renderExerciseChart(){
+  const name = document.getElementById("chartExercise").value;
+  const points = [];
+  data.sessions.forEach(s=>{
+    (s.exercises||[]).forEach(ex=>{
+      if(ex.name===name && ex.kg){
+        points.push({date:s.date, value:Number(ex.kg)});
+      }
+    });
+  });
+  points.sort((a,b)=>a.date.localeCompare(b.date));
+  document.getElementById("exerciseChart").innerHTML = makeLineChart(points.slice(-20), "kg");
+}
+function makeLineChart(points, unit){
+  if(points.length < 2) return `<div class="empty" style="height:100%;display:grid;place-items:center">Grafik için en az 2 kayıt gerekir.</div>`;
+  const w=640,h=250,pad=38;
+  const vals = points.map(p=>p.value);
+  let min = Math.min(...vals), max = Math.max(...vals);
+  if(min===max){min-=1;max+=1}
+  const x = i => pad + (i*(w-pad*2)/(points.length-1));
+  const y = v => h-pad - ((v-min)*(h-pad*2)/(max-min));
+  const path = points.map((p,i)=>`${i===0?'M':'L'} ${x(i)} ${y(p.value)}`).join(" ");
+  const circles = points.map((p,i)=>`<circle cx="${x(i)}" cy="${y(p.value)}" r="4"><title>${p.date}: ${p.value} ${unit}</title></circle>`).join("");
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#22c55e"/></linearGradient></defs>
+    <line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="#2a3a59"/>
+    <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${h-pad}" stroke="#2a3a59"/>
+    <text x="${pad}" y="${pad-10}" fill="#96a3b8" font-size="12">${max.toFixed(1)} ${unit}</text>
+    <text x="${pad}" y="${h-10}" fill="#96a3b8" font-size="12">${min.toFixed(1)} ${unit}</text>
+    <path d="${path}" fill="none" stroke="url(#g)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <g fill="#e8edf7">${circles}</g>
+  </svg>`;
+}
+function weeklyVolume(){
+  const vol = {};
+  data.sessions.filter(s=>isThisWeek(s.date)).forEach(s=>{
+    (s.exercises||[]).forEach(ex=>{
+      if(!ex.done && !ex.kg && !ex.reps) return;
+      const sets = Number(ex.targetSets) || 0;
+      const muscles = ex.muscles || [];
+      muscles.forEach((m, i)=>{
+        const key = normalizeMuscle(m);
+        vol[key] = (vol[key] || 0) + (i===0 ? sets : Math.max(1, Math.round(sets/2)));
+      });
+    });
+  });
+  return vol;
+}
+function normalizeMuscle(m){
+  if(m.includes("Biceps") || m.includes("Ön kol")) return "Biceps";
+  if(m.includes("Triceps")) return "Triceps";
+  if(m.includes("göğüs") || m.includes("Göğüs")) return "Göğüs";
+  if(m.includes("Sırt") || m.includes("lat")) return "Sırt";
+  if(m.includes("omuz") || m.includes("Omuz")) return "Omuz";
+  if(m.includes("Bacak") || m.includes("bacak") || m.includes("Kalça") || m.includes("Baldır")) return "Bacak";
+  if(m.includes("Karın")) return "Karın";
+  return m;
+}
+function renderReport(){
+  const sessions = data.sessions.filter(s=>isThisWeek(s.date));
+  document.getElementById("reportSessions").textContent = `${sessions.length}/5`;
+  const weight7 = [...data.weights].sort((a,b)=>a.date.localeCompare(b.date)).slice(-7).map(x=>Number(x.kg)).filter(x=>!isNaN(x));
+  document.getElementById("reportAvgWeight").textContent = weight7.length ? `${(weight7.reduce((a,b)=>a+b,0)/weight7.length).toFixed(1)} kg` : "-";
+  document.getElementById("reportNutri").textContent = data.nutrition.filter(n=>isThisWeek(n.date)).length;
+  const vol = weeklyVolume();
+  const targets = {"Göğüs":14,"Sırt":12,"Omuz":10,"Biceps":12,"Triceps":12,"Bacak":12,"Karın":4};
+  document.getElementById("volumeBars").innerHTML = Object.keys(targets).map(k=>{
+    const value = vol[k] || 0;
+    const pct = Math.min(100, Math.round(value / targets[k] * 100));
+    return `<div style="margin:12px 0">
+      <div style="display:flex;justify-content:space-between"><b>${k}</b><span class="muted">${value}/${targets[k]} set</span></div>
+      <div class="progress"><div class="bar" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join("");
+  let comment = "";
+  if(data.profile.mode==="prep") comment += "Şu an hazırlık modundasın. Veri girmeye başladığında haftalık yorumlar daha anlamlı olacak.\n\n";
+  if(sessions.length===0) comment += "Bu hafta kayıtlı antrenman yok. Başladığında ilk hedef 5/5 değil, düzeni oturtmak olsun.";
+  else if(sessions.length<5) comment += `Bu hafta ${sessions.length}/5 antrenman kayıtlı. Eksik günler varsa sebebini notlara yaz; toparlanma mı, zaman mı görelim.`;
+  else comment += "Bu hafta 5/5 antrenman tamamlanmış. Şimdi hedef aynı hareketlerde formu bozmadan küçük tekrar artışları.";
+  const priority = ["Göğüs","Biceps","Triceps"].map(k=>`${k}: ${vol[k]||0} set`).join("\n");
+  comment += `\n\nÖncelik bölgeleri:\n${priority}`;
+  document.getElementById("weeklyComment").textContent = comment;
+}
+function renderLibrary(){
+  const q = (document.getElementById("librarySearch").value || "").toLowerCase();
+  const items = library.filter(x=>!q || (x.name+x.muscle+x.goal).toLowerCase().includes(q));
+  document.getElementById("libraryGrid").innerHTML = items.map(x=>`
+    <div class="lib-card">
+      <h4>${x.name}</h4>
+      <span class="pill">${x.muscle}</span><span class="pill">${x.rep}</span>
+      <p><b>Amaç:</b> ${x.goal}</p>
+      <p><b>Dikkat:</b> ${x.cue}</p>
+      <p><b>Hata:</b> ${x.mistake}</p>
+    </div>`).join("");
+}
+function saveProfile(){
+  data.profile.name = document.getElementById("profileName").value || "Kullanıcı";
+  data.profile.mode = document.getElementById("profileMode").value;
+  data.profile.startDate = document.getElementById("profileStart").value;
+  data.profile.phone = document.getElementById("profilePhone").value.trim();
+  data.profile.onboarded = true;
+  save();
+  alert("Profil kaydedildi.");
+}
+function copyTodayMessage(){
+  navigator.clipboard.writeText(todayMessage()).then(()=>alert("Mesaj kopyalandı."));
+}
+function openWhatsapp(){
+  const phone = (data.profile.phone || "").replace(/\D/g,"");
+  const text = encodeURIComponent(todayMessage());
+  const url = phone ? `https://wa.me/${phone}?text=${text}` : `https://wa.me/?text=${text}`;
+  window.open(url, "_blank");
+}
+function exportData(){
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "fit-panel-v2-yedek.json";
+  a.click();
+}
+function importData(){
+  try{
+    const parsed = JSON.parse(document.getElementById("importJson").value);
+    if(!parsed.profile || !parsed.sessions || !parsed.nutrition) throw new Error("format");
+    data = parsed; save(); alert("Veriler içe aktarıldı.");
+  }catch(err){alert("JSON formatı hatalı görünüyor.");}
+}
+function clearData(){
+  if(confirm("Tüm veriler silinsin mi? Bu işlem geri alınamaz.")){
+    data = JSON.parse(JSON.stringify(defaultData));
+    save();
+  }
+}
+
+function maybeShowOnboarding(){
+  const stored = localStorage.getItem("fitPanelV2");
+  const needsName = !data.profile.onboarded || !data.profile.name || data.profile.name === "Kullanıcı";
+  if(!stored || needsName){
+    document.getElementById("onboard").classList.remove("hidden");
+    document.getElementById("onboardName").value = data.profile.name && data.profile.name !== "Kullanıcı" ? data.profile.name : "";
+    document.getElementById("onboardMode").value = data.profile.mode || "prep";
+    setTimeout(()=>document.getElementById("onboardName").focus(), 150);
+  }
+}
+function finishOnboarding(){
+  const name = document.getElementById("onboardName").value.trim();
+  data.profile.name = name || "Kullanıcı";
+  data.profile.mode = document.getElementById("onboardMode").value;
+  data.profile.onboarded = true;
+  document.getElementById("profileName").value = data.profile.name;
+  document.getElementById("profileMode").value = data.profile.mode;
+  document.getElementById("onboard").classList.add("hidden");
+  save();
+}
+function skipOnboarding(){
+  data.profile.name = data.profile.name || "Kullanıcı";
+  data.profile.onboarded = true;
+  document.getElementById("onboard").classList.add("hidden");
+  save();
+}
+
+function renderAll(){
+  renderDashboard();
+  renderCalendar();
+  renderTrainingForm();
+  renderSessionHistory();
+  renderDetailedHistory();
+  renderNutritionTemplate();
+  renderNutritionRows();
+  renderCharts();
+  renderReport();
+  renderLibrary();
+}
+setDefaults();
+renderAll();
+maybeShowOnboarding();
+</script>
+</body>
+</html>
